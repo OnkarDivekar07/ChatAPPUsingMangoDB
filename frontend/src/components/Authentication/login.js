@@ -3,30 +3,70 @@ import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useState } from "react";
+import axios from "axios";
+import { useToast } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
+
 
 const Login = () => {
   const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
   const [email, setEmail] = useState("");
+  const toast = useToast();
   const [password, setPassword] = useState("");
-  const [picLoading, setPicLoading] = useState(false);
+  const [Loading, setLoading] = useState(false);
 
+
+  const handleClick = () => setShow(!show);
+  const history = useHistory();
   const submitHandler = async () => {
+    setLoading(true);
     if (!email || !password) {
-      alert("Please fill in both email and password.");
+      toast({
+        title: "Please Fill all the Fields",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
       return;
     }
+    console.log(email, password);
     try {
-      setPicLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setPicLoading(false);
-      setEmail("");
-      setPassword("");
-      alert("Login successful!");
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/user/login",
+        {
+          email,
+          password
+        },
+        config
+      );
+      console.log(data);
+      toast({
+        title: "login Successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+     localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
+      history.push("/chats");
     } catch (error) {
-      console.error("Login error:", error);
-      alert("Login failed. Please check your credentials.");
-      setPicLoading(false);
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
     }
   };
 
@@ -62,7 +102,7 @@ const Login = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
-        isLoading={picLoading}
+        isLoading={Loading}
       >
         Login
       </Button>

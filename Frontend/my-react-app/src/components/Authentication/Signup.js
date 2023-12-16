@@ -1,3 +1,4 @@
+// Signup.js
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
@@ -5,16 +6,19 @@ import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Signup = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
 
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [picLoading, setPicLoading] = useState(false);
+
+  const navigate = useNavigate(); // Use useNavigate hook for navigation
 
   const submitHandler = async () => {
     setPicLoading(true);
@@ -29,23 +33,20 @@ const Signup = () => {
       setPicLoading(false);
       return;
     }
-    console.log(name, email, password);
+
     try {
       const config = {
         headers: {
           "Content-type": "application/json",
         },
       };
+
       const { data } = await axios.post(
-        "/user/signup",
-        {
-          name,
-          email,
-          password
-        },
+        "/api/user",
+        { name, email, password },
         config
       );
-      console.log(data);
+
       toast({
         title: "Registration Successful",
         status: "success",
@@ -55,10 +56,13 @@ const Signup = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setPicLoading(false);
+
+      // Navigate to the "/chats" route upon successful registration
+      navigate("/chats");
     } catch (error) {
       toast({
-        title: "Error Occured!",
-        description: error.response.data.message,
+        title: "Error Occurred!",
+        description: error.response?.data.message || "Something went wrong",
         status: "error",
         duration: 5000,
         isClosable: true,

@@ -1,3 +1,5 @@
+// Homepage.js
+import React from "react";
 import {
   Box,
   Container,
@@ -8,10 +10,8 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-
-import Login from '../components/Authentication/login'
-
-import SignUp from '../components/Authentication/signup'
+import Login from '../components/Authentication/Login.js'
+import SignUp from '../components/Authentication/Signup.js'
 
 function Homepage() {
   return (
@@ -27,7 +27,7 @@ function Homepage() {
         borderWidth="1px"
       >
         <Text fontSize="4xl" fontFamily="Work sans" textAlign={"center"}>
-         WeChat
+          WeChat
         </Text>
       </Box>
       <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
@@ -38,10 +38,10 @@ function Homepage() {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Login/>
+              <Login />
             </TabPanel>
             <TabPanel>
-              <SignUp/>
+              <SignUp />
             </TabPanel>
           </TabPanels>
         </Tabs>
